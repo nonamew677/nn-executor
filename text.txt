@@ -1,0 +1,244 @@
+-- Services
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Prevent duplicate GUIs if run multiple times
+if CoreGui:FindFirstChild("NoNameScriptHub") then
+	CoreGui.NoNameScriptHub:Destroy()
+end
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NoNameScriptHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = CoreGui
+
+-- Main Frame (Script Hub Window)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 480, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = MainFrame
+
+-- Header Bar
+local Header = Instance.new("Frame")
+Header.Name = "Header"
+Header.Size = UDim2.new(1, 0, 0, 45)
+Header.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+Header.BorderSizePixel = 0
+Header.Parent = MainFrame
+
+local HeaderCorner = Instance.new("UICorner")
+HeaderCorner.CornerRadius = UDim.new(0, 8)
+HeaderCorner.Parent = Header
+
+-- Title Label
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(1, -100, 1, 0)
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.Text = "NO_NAME SCRIPT HUB"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 15
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Header
+
+-- Close Button (Inside Hub)
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0.5, -15)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+CloseButton.Parent = Header
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseButton
+
+-- Navigation Tabs Container
+local TabContainer = Instance.new("Frame")
+TabContainer.Name = "TabContainer"
+TabContainer.Size = UDim2.new(1, -20, 0, 35)
+TabContainer.Position = UDim2.new(0, 10, 0, 55)
+TabContainer.BackgroundTransparency = 1
+TabContainer.Parent = MainFrame
+
+local UIListLayoutTabs = Instance.new("UIListLayout")
+UIListLayoutTabs.FillDirection = Enum.FillDirection.Horizontal
+UIListLayoutTabs.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayoutTabs.Padding = UDim.new(0, 10)
+UIListLayoutTabs.Parent = TabContainer
+
+local function CreateTabButton(name, layoutOrder)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 100, 1, 0)
+	btn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+	btn.Text = name
+	btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+	btn.Font = Enum.Font.GothamMedium
+	btn.TextSize = 13
+	btn.LayoutOrder = layoutOrder
+	btn.Parent = TabContainer
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 6)
+	corner.Parent = btn
+	return btn
+end
+
+local VaultTabBtn = CreateTabButton("Script Vault", 1)
+local ExecutorTabBtn = CreateTabButton("Executor", 2)
+local SettingsTabBtn = CreateTabButton("Settings", 3)
+
+-- Pages Container
+local PagesContainer = Instance.new("Frame")
+PagesContainer.Name = "PagesContainer"
+PagesContainer.Size = UDim2.new(1, -20, 1, -105)
+PagesContainer.Position = UDim2.new(0, 10, 0, 95)
+PagesContainer.BackgroundTransparency = 1
+PagesContainer.Parent = MainFrame
+
+-- Script Vault Page
+local ScriptVaultPage = Instance.new("ScrollingFrame")
+ScriptVaultPage.Name = "ScriptVaultPage"
+ScriptVaultPage.Size = UDim2.new(1, 0, 1, 0)
+ScriptVaultPage.BackgroundTransparency = 1
+ScriptVaultPage.BorderSizePixel = 0
+ScriptVaultPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScriptVaultPage.ScrollBarThickness = 4
+ScriptVaultPage.Visible = true
+ScriptVaultPage.Parent = PagesContainer
+
+local VaultLayout = Instance.new("UIListLayout")
+VaultLayout.SortOrder = Enum.SortOrder.LayoutOrder
+VaultLayout.Padding = UDim.new(0, 8)
+VaultLayout.Parent = ScriptVaultPage
+
+-- Executor Page (BLANK)
+local ExecutorPage = Instance.new("Frame")
+ExecutorPage.Name = "ExecutorPage"
+ExecutorPage.Size = UDim2.new(1, 0, 1, 0)
+ExecutorPage.BackgroundTransparency = 1
+ExecutorPage.Visible = false
+ExecutorPage.Parent = PagesContainer
+
+local CodeBox = Instance.new("TextBox")
+CodeBox.Name = "CodeBox"
+CodeBox.Size = UDim2.new(1, 0, 1, -45)
+CodeBox.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+CodeBox.ClearTextOnFocus = false
+CodeBox.MultiLine = true
+CodeBox.Text = "" -- COMPLETELY BLANK
+CodeBox.PlaceholderText = "-- Type or paste your script here..."
+CodeBox.TextColor3 = Color3.fromRGB(80, 255, 150)
+CodeBox.Font = Enum.Font.Code
+CodeBox.TextSize = 13
+CodeBox.TextXAlignment = Enum.TextXAlignment.Left
+CodeBox.TextYAlignment = Enum.TextYAlignment.Top
+CodeBox.Parent = ExecutorPage
+
+local CodeCorner = Instance.new("UICorner")
+CodeCorner.CornerRadius = UDim.new(0, 6)
+CodeCorner.Parent = CodeBox
+
+local ExecuteButton = Instance.new("TextButton")
+ExecuteButton.Name = "ExecuteButton"
+ExecuteButton.Size = UDim2.new(1, 0, 0, 35)
+ExecuteButton.Position = UDim2.new(0, 0, 1, -35)
+ExecuteButton.BackgroundColor3 = Color3.fromRGB(40, 120, 60)
+ExecuteButton.Text = "Execute"
+ExecuteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExecuteButton.Font = Enum.Font.GothamBold
+ExecuteButton.TextSize = 14
+ExecuteButton.Parent = ExecutorPage
+
+local ExecCorner = Instance.new("UICorner")
+ExecCorner.CornerRadius = UDim.new(0, 6)
+ExecCorner.Parent = ExecuteButton
+
+ExecuteButton.MouseButton1Click:Connect(function()
+	if CodeBox.Text ~= "" then
+		local success, err = pcall(function()
+			loadstring(CodeBox.Text)()
+		end)
+		if not success then
+			warn("Execution Error: " .. tostring(err))
+		end
+	end
+end)
+
+-- Settings Page
+local SettingsPage = Instance.new("Frame")
+SettingsPage.Name = "SettingsPage"
+SettingsPage.Size = UDim2.new(1, 0, 1, 0)
+SettingsPage.BackgroundTransparency = 1
+SettingsPage.Visible = false
+SettingsPage.Parent = PagesContainer
+
+local SettingsLabel = Instance.new("TextLabel")
+SettingsLabel.Size = UDim2.new(1, 0, 0, 30)
+SettingsLabel.BackgroundTransparency = 1
+SettingsLabel.Text = "No additional settings available."
+SettingsLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+SettingsLabel.Font = Enum.Font.GothamMedium
+SettingsLabel.TextSize = 13
+SettingsLabel.TextXAlignment = Enum.TextXAlignment.Left
+SettingsLabel.Parent = SettingsPage
+
+-- Tab switching logic
+local function SwitchTab(selectedTab)
+	ScriptVaultPage.Visible = (selectedTab == "Vault")
+	ExecutorPage.Visible = (selectedTab == "Executor")
+	SettingsPage.Visible = (selectedTab == "Settings")
+
+	VaultTabBtn.BackgroundColor3 = (selectedTab == "Vault") and Color3.fromRGB(50, 50, 65) or Color3.fromRGB(35, 35, 45)
+	ExecutorTabBtn.BackgroundColor3 = (selectedTab == "Executor") and Color3.fromRGB(50, 50, 65) or Color3.fromRGB(35, 35, 45)
+	SettingsTabBtn.BackgroundColor3 = (selectedTab == "Settings") and Color3.fromRGB(50, 50, 65) or Color3.fromRGB(35, 35, 45)
+end
+
+VaultTabBtn.MouseButton1Click:Connect(function() SwitchTab("Vault") end)
+ExecutorTabBtn.MouseButton1Click:Connect(function() SwitchTab("Executor") end)
+SettingsTabBtn.MouseButton1Click:Connect(function() SwitchTab("Settings") end)
+SwitchTab("Vault")
+
+-- MOBILE-FRIENDLY FLOATING TOGGLE BUTTON (Open / Close)
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Name = "ToggleHubButton"
+ToggleButton.Size = UDim2.new(0, 45, 0, 45)
+ToggleButton.Position = UDim2.new(0, 20, 0.4, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+ToggleButton.Text = "UI"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextSize = 14
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Parent = ScreenGui
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(1, 0)
+ToggleCorner.Parent = ToggleButton
+
+local function ToggleHub()
+	MainFrame.Visible = not MainFrame.Visible
+end
+
+CloseButton.MouseButton1Click:Connect(ToggleHub)
+ToggleButton.MouseButton1Click:Connect(ToggleHub)
